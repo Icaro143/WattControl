@@ -13,14 +13,22 @@ const horas = document.getElementById('tempo');
 const bandeira = document.getElementById('bandeira');
 
 const potenciaAparelhos = {
-    'televisao': 30,
-    'computador': 45,
-    'geladeira': 56,
-    'maquina_lavar': 12,
-    'microondas': 18,
-    'chuveiro': 220,
-    'ar_condicionado': 193,
+
+    televisao: 100,
+
+    computador: 300,
+
+    geladeira: 150,
+
+    maquina_lavar: 1000,
+
+    microondas: 1400,
+
+    chuveiro: 5500,
+
+    ar_condicionado: 1200,
 };
+
 const nomesBonitos = {
 
     televisao: "Televisão",
@@ -36,7 +44,6 @@ const nomesBonitos = {
     chuveiro: "Chuveiro",
 
     ar_condicionado: "Ar Condicionado"
-
 };
 
 const consumos = [];
@@ -44,52 +51,88 @@ const consumos = [];
 const nomeAparelhos = [];
 
 let grafico = null;
+
 botao.addEventListener('click', function () {
-    console.log('clicou');
 
     const aparelhoSelecionado = aparelho.value;
 
     const horaUso = Number(horas.value);
 
-    const consumo = potenciaAparelhos[aparelhoSelecionado];
+    if (horaUso <= 0 || isNaN(horaUso)) {
+
+        alert("Digite um valor válido de horas.");
+
+        return;
+    }
+
+    if (horaUso > 720) {
+
+        alert("O máximo permitido é 720 horas mensais.");
+
+        return;
+    }
+
+    const potencia = potenciaAparelhos[aparelhoSelecionado];
 
     const tarifa = Number(bandeira.value);
 
-    const consumoMensal = (consumo * horaUso) / 1000;
+    const consumoMensal = (potencia * horaUso) / 1000;
 
     const valorMensal = consumoMensal * tarifa;
 
-    consumos.push(consumoMensal);
-    nomeAparelhos.push(aparelhoSelecionado);
+    const indiceExistente =
+        nomeAparelhos.indexOf(aparelhoSelecionado);
 
-    const lista = document.getElementById("aparelhos-lista")
+    if (indiceExistente !== -1) {
 
-    const item = document.createElement('li');
+        consumos[indiceExistente] += valorMensal;
 
-    item.textContent =
-        `${nomesBonitos[aparelhoSelecionado]}
-    - R$ ${valorMensal.toFixed(2)}`;
+    } else {
 
-    lista.appendChild(item);
-    let somaTotal = 0;
+        nomeAparelhos.push(aparelhoSelecionado);
 
-    for (let i = 0; i < consumos.length; i++) {
-        somaTotal += consumos[i];
+        consumos.push(valorMensal);
     }
-    let maiorValor = consumos[0];
 
-    let indiceMaior = 0;
-    for (let i = 1; i < consumos.length; i++) {
-        if (consumos[i] > maiorValor) {
-            maiorValor = consumos[i];
-            indiceMaior = i;
-        }
+    const lista =
+        document.getElementById("aparelhos-lista");
+
+    lista.innerHTML = "";
+
+    for (let i = 0; i < nomeAparelhos.length; i++) {
+
+        const item = document.createElement('li');
+
+        item.textContent =
+            `${nomesBonitos[nomeAparelhos[i]]} - R$ ${consumos[i].toFixed(2)}`;
+
+        lista.appendChild(item);
     }
-    const totalTexto = document.getElementById('total');
-    totalTexto.textContent = `Total da residência: R$ ${somaTotal.toFixed(2)} `
 
-    const textoMaior = document.getElementById('maiorConsumo');
-    textoMaior.textContent = `Maior consumo: ${nomesBonitos[nomeAparelhos[indiceMaior]]} - R$ ${maiorValor.toFixed(2)} `;
+    const somaTotal = consumos.reduce(
+
+        (total, valor) => total + valor,
+
+        0
+    );
+
+    const maiorValor = Math.max(...consumos);
+
+    const indiceMaior =
+        consumos.indexOf(maiorValor);
+
+    const totalTexto =
+        document.getElementById('total');
+
+    totalTexto.textContent =
+        `Total da residência: R$ ${somaTotal.toFixed(2)}`;
+
+    const textoMaior =
+        document.getElementById('maiorConsumo');
+
+    textoMaior.textContent =
+        `Maior consumo: ${nomesBonitos[nomeAparelhos[indiceMaior]]} - R$ ${maiorValor.toFixed(2)}`;
+
     const dicaTexto =
         document.getElementById('dicaEconomia');
 
@@ -118,73 +161,140 @@ botao.addEventListener('click', function () {
         dicaTexto.textContent =
             "Dica: acompanhe regularmente seu consumo.";
     }
-    const mediaBrasil = 350;
-    const diferenca = somaTotal - mediaBrasil;
-    const porcentagem = (diferenca / mediaBrasil) * 100;
 
-    const comparacaoTexto = document.getElementById('comparacaoBrasil');
-    const economiaTexto = document.getElementById('economiaPossivel');
-    const economiaEstima = maiorValor * 0.15;
-    economiaTexto.textContent =
-        `Economia possível: R$ ${economiaEstima.toFixed(2)} (15% do maior consumo)`;
-    const alertaConsumo = document.getElementById('alertaConsumo');
+    const mediaBrasil = 350;
+
+    const diferenca =
+        somaTotal - mediaBrasil;
+
+    const porcentagem =
+        (diferenca / mediaBrasil) * 100;
+
+    const comparacaoTexto =
+        document.getElementById('comparacaoBrasil');
+
     if (somaTotal > mediaBrasil) {
-        alertaConsumo.textContent =
-            "Alerta: Seu consumo está acima da média brasileira.";
-    } else if (somaTotal < mediaBrasil) {
-        alertaConsumo.textContent =
-            "Parabéns! Seu consumo está abaixo da média brasileira.";
-    } else {
-        alertaConsumo.textContent =
-            "Seu consumo está exatamente na média brasileira.";
-    }
-    const impactoTexto = document.getElementById('impactoAmbiental');
-    const co2 = somaTotal * 0.084;
-    impactoTexto.textContent =
-        `Impacto ambiental estimado: ${co2.toFixed(2)} kg de CO2 por mês.`;
-    const scoreTexto = document.getElementById('scoreEnergia');
-    let score = 100 - Math.abs((somaTotal - mediaBrasil) / mediaBrasil * 10);
-    if (score < 0) {
-        score = 0;
-    }
-    scoreTexto.textContent =
-        `Score energético: ${score.toFixed(2)}/100`;
-    if (somaTotal > mediaBrasil) {
+
         comparacaoTexto.textContent =
             `Seu consumo é ${porcentagem.toFixed(2)}% maior que a média brasileira.`;
+
     } else if (somaTotal < mediaBrasil) {
+
         comparacaoTexto.textContent =
             `Seu consumo é ${Math.abs(porcentagem).toFixed(2)}% menor que a média brasileira.`;
+
     } else {
+
         comparacaoTexto.textContent =
             "Seu consumo está igual à média brasileira.";
     }
-    consumoTexto.textContent = `Consumo mensal: ${consumoMensal.toFixed(2)} kWh`;
-    valorTexto.textContent = `Valor mensal: R$ ${valorMensal.toFixed(2)} `;
-    const textoTarifa = document.getElementById('tarifaAtual');
-    if (tarifa === 0.72) {
-        textoTarifa.textContent = "Tarifa atual: Verde";
-    } else if (tarifa === 0.89) {
-        textoTarifa.textContent = "Tarifa atual: Amarela";
-    } else if (tarifa === 1.05) {
-        textoTarifa.textContent = "Tarifa atual: Vermelha 1";
-    } else if (tarifa === 1.24) {
-        textoTarifa.textContent = "Tarifa atual: Vermelha 2";
+
+    const economiaTexto =
+        document.getElementById('economiaPossivel');
+
+    const economiaEstimada =
+        maiorValor * 0.15;
+
+    economiaTexto.textContent =
+        `Economia possível: R$ ${economiaEstimada.toFixed(2)}`;
+
+    const alertaConsumo =
+        document.getElementById('alertaConsumo');
+
+    if (somaTotal > mediaBrasil) {
+
+        alertaConsumo.textContent =
+            "Alerta: Seu consumo está acima da média brasileira.";
+
     } else {
-        textoTarifa.textContent = "Tarifa atual: Desconhecida";
+
+        alertaConsumo.textContent =
+            "Parabéns! Seu consumo está controlado.";
     }
-    const ctx = document.getElementById('graficoPizza').getContext('2d');
+
+    const impactoTexto =
+        document.getElementById('impactoAmbiental');
+
+    const co2 =
+        somaTotal * 0.084;
+
+    impactoTexto.textContent =
+        `Impacto ambiental estimado: ${co2.toFixed(2)} kg de CO2/mês`;
+
+    const scoreTexto =
+        document.getElementById('scoreEnergia');
+
+    let score =
+        100 - Math.abs((somaTotal - mediaBrasil) / mediaBrasil * 10);
+
+    if (score < 0) {
+
+        score = 0;
+    }
+
+    if (score > 100) {
+
+        score = 100;
+    }
+
+    scoreTexto.textContent =
+        `Score energético: ${score.toFixed(0)}/100`;
+
+    consumoTexto.textContent =
+        `Consumo mensal: ${consumoMensal.toFixed(2)} kWh`;
+
+    valorTexto.textContent =
+        `Valor mensal: R$ ${valorMensal.toFixed(2)}`;
+
+    const textoTarifa =
+        document.getElementById('tarifaAtual');
+
+    if (tarifa === 0.72) {
+
+        textoTarifa.textContent =
+            "Tarifa atual: Bandeira Verde";
+
+    } else if (tarifa === 0.89) {
+
+        textoTarifa.textContent =
+            "Tarifa atual: Bandeira Amarela";
+
+    } else if (tarifa === 1.05) {
+
+        textoTarifa.textContent =
+            "Tarifa atual: Bandeira Vermelha 1";
+
+    } else if (tarifa === 1.24) {
+
+        textoTarifa.textContent =
+            "Tarifa atual: Bandeira Vermelha 2";
+    }
+
+    const ctx =
+        document.getElementById('graficoPizza').getContext('2d');
+
     if (grafico !== null) {
+
         grafico.destroy();
     }
+
     grafico = new Chart(ctx, {
+
         type: 'pie',
+
         data: {
-            labels: nomeAparelhos,
+
+            labels: nomeAparelhos.map(
+
+                nome => nomesBonitos[nome]
+            ),
+
             datasets: [{
+
                 data: consumos,
 
                 backgroundColor: [
+
                     '#22c55e',
                     '#3b82f6',
                     '#f97316',
@@ -193,14 +303,16 @@ botao.addEventListener('click', function () {
                     '#8b5cf6',
                     '#14b8a6'
                 ],
+
                 borderWidth: 2
             }]
-
         }
     });
-
 });
+
 botaoReset.addEventListener("click", function () {
+
+    horas.value = "";
 
     consumos.length = 0;
 
@@ -222,6 +334,7 @@ botaoReset.addEventListener("click", function () {
     document.getElementById('comparacaoBrasil')
         .textContent =
         "Comparação com média: -";
+
     document.getElementById('dicaEconomia')
         .textContent =
         "Dica de economia: -";
@@ -229,6 +342,7 @@ botaoReset.addEventListener("click", function () {
     document.getElementById('tarifaAtual')
         .textContent =
         "Tarifa atual: -";
+
     document.getElementById('economiaPossivel')
         .textContent =
         "Economia possível: -";
@@ -250,7 +364,9 @@ botaoReset.addEventListener("click", function () {
         "Maior consumo: -";
 
     if (grafico !== null) {
+
         grafico.destroy();
+
         grafico = null;
     }
 });

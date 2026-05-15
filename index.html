@@ -5,104 +5,232 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wattcontrol</title>
+
     <link rel="stylesheet" href="style.css">
+
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3103/3103446.png">
 </head>
 
 <body>
+
     <header>
+
         <h1>Wattcontrol</h1>
-        <p>Gestão inteligente de consumo elétrico residencial</p>
+
+        <p>
+            Gestão inteligente de consumo elétrico residencial
+        </p>
+
     </header>
 
     <main class="container">
+
+        <!-- CARD CALCULADORA -->
+
         <section class="card">
+
             <h2>Calculadora de Consumo</h2>
 
-            <label for="aparelho">Eletrodoméstico:</label>
+            <label for="aparelho">
+                Eletrodoméstico:
+            </label>
+
             <select id="aparelho">
-                <option value="televisao">Televisão</option>
-                <option value="computador">Computador</option>
-                <option value="geladeira">Geladeira</option>
-                <option value="maquina_lavar">Máquina de Lavar</option>
-                <option value="microondas">Micro-ondas</option>
-                <option value="ar_condicionado">Ar Condicionado</option>
-                <option value="chuveiro">Chuveiro</option>
+
+                <option value="televisao">
+                    Televisão
+                </option>
+
+                <option value="computador">
+                    Computador
+                </option>
+
+                <option value="geladeira">
+                    Geladeira
+                </option>
+
+                <option value="maquina_lavar">
+                    Máquina de Lavar
+                </option>
+
+                <option value="microondas">
+                    Micro-ondas
+                </option>
+
+                <option value="ar_condicionado">
+                    Ar Condicionado
+                </option>
+
+                <option value="chuveiro">
+                    Chuveiro
+                </option>
+
             </select>
+
             <ul>
-                <li>Monitoramento em tempo real do consumo de energia</li>
-                <li>Relatórios detalhados de uso diário, semanal e mensal</li>
-                <li>Alertas personalizados para consumo excessivo</li>
-                <li>Integração com assistentes virtuais</li>
+
+                <li>
+                    Monitoramento em tempo real do consumo de energia
+                </li>
+
+                <li>
+                    Relatórios detalhados de uso diário, semanal e mensal
+                </li>
+
+                <li>
+                    Alertas personalizados para consumo excessivo
+                </li>
+
+                <li>
+                    Integração com assistentes virtuais
+                </li>
+
             </ul>
 
-            <label for="bandeira">Bandeira tarifária:</label>
+            <label for="bandeira">
+                Bandeira tarifária:
+            </label>
+
             <select id="bandeira">
-                <option value="0.72">Verde</option>
-                <option value="0.89">Amarela</option>
-                <option value="1.05">Vermelha 1</option>
-                <option value="1.24">Vermelha 2</option>
+
+                <option value="0.72">
+                    Verde
+                </option>
+
+                <option value="0.89">
+                    Amarela
+                </option>
+
+                <option value="1.05">
+                    Vermelha 1
+                </option>
+
+                <option value="1.24">
+                    Vermelha 2
+                </option>
+
             </select>
-            <label for="tempo">Tempo de uso (horas):</label>
 
-            <input type="number" id="tempo" min="1" placeholder="EX: 5 horas">
+            <label for="tempo">
+                Tempo de uso (horas):
+            </label>
 
-            <button id="calcular">Calcular Consumo</button>
+            <input type="number" id="tempo" min="1" max="720" placeholder="EX: 5 horas">
+
+            <button id="calcular">
+                Calcular Consumo
+            </button>
+
             <button id="resetar">
                 Resetar Dados
             </button>
+
         </section>
-        <section class="resultado card">
+
+        <!-- CARD RESULTADO -->
+
+        <section class="resultado">
+
             <h2>Resultado</h2>
 
-            <!-- bloco-info -->
+            <!-- TOP KPIS -->
+
             <div class="bloco-info">
-                <p id="consumo">Consumo: 0 kWh </p>
 
-                <p id="custo">Custo: R$ 0,00 </p>
+                <p id="consumo">
+                    Consumo: 0 kWh
+                </p>
 
-                <p id="tarifaAtual"> Tarifa atual: -</p>
+                <p id="custo">
+                    Custo: R$ 0,00
+                </p>
+
+                <p id="tarifaAtual">
+                    Tarifa atual: -
+                </p>
+
             </div>
 
-            <!-- bloco-comparacao -->
+            <!-- CENTRO -->
+
             <div class="bloco-comparacao">
 
-                <h3>Aparelhos adicionados</h3>
+                <!-- DADOS -->
 
-                <ul id="aparelhos-lista"></ul>
+                <div class="dados-consumo">
 
-                <p id="total">total da residência: R$ 0,00 </p>
+                    <h3>
+                        Aparelhos adicionados
+                    </h3>
 
-                <p id='maiorConsumo'>Maior consumo: -</p>
+                    <ul id="aparelhos-lista">
+                    </ul>
 
-                <canvas id="graficoPizza" width="300" height="300"></canvas>
+                    <p id="total">
+                        Total da residência: R$ 0,00
+                    </p>
+
+                    <p id="maiorConsumo">
+                        Maior consumo: -
+                    </p>
+
+                </div>
+
+                <!-- GRAFICO -->
+
+                <div class="grafico-area">
+
+                    <canvas id="graficoPizza" width="300" height="300">
+                    </canvas>
+
+                </div>
+
             </div>
 
-            <!-- bloco-alertas -->
+            <!-- ALERTAS -->
+
             <div class="bloco-alertas">
 
-                <p id="comparacaoBrasil"> Comparação com a média brasileira </p>
+                <p id="comparacaoBrasil">
+                    Comparação com a média brasileira
+                </p>
 
-                <p id="dicaEconomia">Dica de economia: </p>
+                <p id="dicaEconomia">
+                    Dica de economia: -
+                </p>
+
             </div>
 
-            <!-- bloco-analytics -->
+            <!-- ANALYTICS -->
+
             <div class="bloco-analytics">
 
-                <p id="economiaPossivel">Economia possível: -</p>
+                <p id="economiaPossivel">
+                    Economia possível: -
+                </p>
 
-                <p id="alertaConsumo">Nível de consumo: -</p>
+                <p id="alertaConsumo">
+                    Nível de consumo: -
+                </p>
 
-                <p id="impactoAmbiental"> Impacto ambiental: -</p>
+                <p id="impactoAmbiental">
+                    Impacto ambiental: -
+                </p>
 
-                <p id="scoreEnergia"> Score energético: -</p>
+                <p id="scoreEnergia">
+                    Score energético: -
+                </p>
+
             </div>
+
         </section>
 
     </main>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="script.js"></script>
+
 </body>
 
 </html>
